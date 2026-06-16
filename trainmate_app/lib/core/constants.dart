@@ -12,7 +12,7 @@ class AppConstants {
     return const String.fromEnvironment(
       'API_BASE_URL',
       // Default to host LAN IP so one build works on real device + emulator.
-      defaultValue: 'http://192.168.1.11:8000',
+      defaultValue: 'http://172.20.10.3:8000',
     );
   }
 
@@ -29,9 +29,10 @@ class AppConstants {
 
     add(devApiBaseUrlOverride);
     add(const String.fromEnvironment('API_BASE_URL'));
-    add('http://192.168.1.11:8000'); // Current Wi-Fi LAN IP (real phone)
-    add('http://192.168.137.1:8000'); // Windows hotspot fallback
+    add('http://172.20.10.3:8000'); // PC LAN / hotspot IP (real phone)
     add('http://10.0.2.2:8000'); // Android emulator -> host machine
+    add('http://192.168.1.6:8000'); // Previous home Wi-Fi fallback
+    add('http://192.168.137.1:8000'); // Windows hotspot fallback
     add('http://127.0.0.1:8000'); // iOS simulator / desktop local
     add('http://localhost:8000');
     return out;
