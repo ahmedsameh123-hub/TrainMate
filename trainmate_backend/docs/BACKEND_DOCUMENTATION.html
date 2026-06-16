@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>TrainMate Backend — Technical Documentation</title>
+  <style>
+    :root {
+      --bg: #0f1419;
+      --surface: #1a2332;
+      --border: #2d3a4d;
+      --text: #e6edf3;
+      --muted: #8b9cb0;
+      --accent: #3b82f6;
+      --accent-dim: #1d4ed8;
+      --ok: #22c55e;
+      --code-bg: #0d1117;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      font-size: 16px;
+    }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .wrap { max-width: 960px; margin: 0 auto; padding: 2rem 1.25rem 4rem; }
+    header.doc-header {
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    header.doc-header h1 { font-size: 1.75rem; font-weight: 700; margin: 0 0 0.5rem; }
+    header.doc-header p { color: var(--muted); margin: 0; max-width: 52ch; }
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+      margin-top: 1.5rem;
+    }
+    @media (min-width: 720px) {
+      .hero-grid { grid-template-columns: 1.1fr 0.9fr; align-items: start; }
+    }
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.25rem 1.5rem;
+    }
+    .card h2 { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); margin: 0 0 0.75rem; }
+    nav.toc {
+      position: sticky;
+      top: 1rem;
+      font-size: 0.9rem;
+    }
+    nav.toc ul { list-style: none; padding: 0; margin: 0; }
+    nav.toc li { margin: 0.35rem 0; }
+    nav.toc a { color: var(--muted); }
+    nav.toc a:hover { color: var(--accent); }
+    section { margin-bottom: 3rem; scroll-margin-top: 1rem; }
+    section h2 {
+      font-size: 1.35rem;
+      font-weight: 600;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 0.5rem;
+      margin: 0 0 1rem;
+    }
+    section h3 { font-size: 1.1rem; margin: 1.5rem 0 0.75rem; color: var(--text); }
+    ul { padding-left: 1.25rem; }
+    li { margin: 0.35rem 0; }
+    .muted { color: var(--muted); }
+    pre.code {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem 1.25rem;
+      overflow-x: auto;
+      font-size: 0.85rem;
+      line-height: 1.45;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+      margin: 1rem 0;
+    }
+    th, td {
+      border: 1px solid var(--border);
+      padding: 0.6rem 0.75rem;
+      text-align: left;
+    }
+    th { background: var(--surface); color: var(--muted); font-weight: 600; }
+    tr:nth-child(even) td { background: rgba(255,255,255,0.02); }
+    .diagram {
+      background: #fff;
+      border-radius: 12px;
+      padding: 1rem;
+      margin: 1.25rem 0;
+      overflow-x: auto;
+      border: 1px solid var(--border);
+    }
+    .diagram .mermaid { display: flex; justify-content: center; }
+    .diagram-caption { font-size: 0.85rem; color: var(--muted); margin-top: 0.75rem; }
+    .badge {
+      display: inline-block;
+      font-size: 0.7rem;
+      font-weight: 600;
+      padding: 0.2rem 0.5rem;
+      border-radius: 6px;
+      background: rgba(59, 130, 246, 0.2);
+      color: #93c5fd;
+      vertical-align: middle;
+      margin-left: 0.35rem;
+    }
+    .svg-stack {
+      width: 100%;
+      height: auto;
+      display: block;
+      border-radius: 8px;
+    }
+    figure.png-export {
+      margin: 1rem 0 1.25rem;
+      padding: 0;
+    }
+    figure.png-export img {
+      width: 100%;
+      max-width: 100%;
+      height: auto;
+      display: block;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: #fff;
+    }
+    figure.png-export figcaption {
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-top: 0.6rem;
+    }
+    .live-mermaid-note {
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin: 0.75rem 0 0.5rem;
+    }
+    footer {
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border);
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+    @media print {
+      body { background: #fff; color: #111; }
+      .card, pre.code, .diagram { border-color: #ccc; }
+      nav.toc { position: static; }
+      a { color: #000; text-decoration: underline; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="doc-header">
+      <h1>TrainMate Backend <span class="badge">FastAPI</span></h1>
+      <p>
+        Architecture, data model, API surface, <strong>embedded PNG diagrams</strong> (works offline), plus optional live Mermaid SVG when JavaScript is enabled.
+      </p>
+      <div class="hero-grid">
+        <div class="card">
+          <h2>High-level system</h2>
+          <svg class="svg-stack" viewBox="0 0 520 200" xmlns="http://www.w3.org/2000/svg" aria-label="Client, API, database layers">
+            <defs>
+              <linearGradient id="g1" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stop-color="#3b82f6" stop-opacity="0.35"/>
+                <stop offset="100%" stop-color="#1d4ed8" stop-opacity="0.15"/>
+              </linearGradient>
+            </defs>
+            <rect x="10" y="20" width="150" height="90" rx="10" fill="url(#g1)" stroke="#3b82f6" stroke-width="2"/>
+            <text x="85" y="55" text-anchor="middle" fill="#e6edf3" font-size="14" font-weight="600">Flutter / Web</text>
+            <text x="85" y="78" text-anchor="middle" fill="#8b9cb0" font-size="12">Client app</text>
+            <path d="M 175 65 L 230 65" stroke="#8b9cb0" stroke-width="2" marker-end="url(#arrow)"/>
+            <defs>
+              <marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+                <path d="M0,0 L8,4 L0,8 z" fill="#8b9cb0"/>
+              </marker>
+            </defs>
+            <rect x="240" y="15" width="270" height="120" rx="12" fill="#1a2332" stroke="#2d3a4d" stroke-width="2"/>
+            <text x="375" y="42" text-anchor="middle" fill="#93c5fd" font-size="13" font-weight="600">TrainMate API (Uvicorn)</text>
+            <text x="375" y="62" text-anchor="middle" fill="#8b9cb0" font-size="11">/api — JWT · SQLAlchemy · Groq / OpenRouter</text>
+            <rect x="260" y="78" width="110" height="44" rx="6" fill="#0d1117" stroke="#2d3a4d"/>
+            <text x="315" y="104" text-anchor="middle" fill="#e6edf3" font-size="11">Routers</text>
+            <rect x="385" y="78" width="110" height="44" rx="6" fill="#0d1117" stroke="#2d3a4d"/>
+            <text x="440" y="104" text-anchor="middle" fill="#e6edf3" font-size="11">AI / Email</text>
+            <path d="M 375 145 L 375 165" stroke="#8b9cb0" stroke-width="2" marker-end="url(#arrow2)"/>
+            <defs><marker id="arrow2" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#8b9cb0"/></marker></defs>
+            <rect x="275" y="168" width="200" height="28" rx="6" fill="#14532d" stroke="#22c55e" stroke-opacity="0.5"/>
+            <text x="375" y="187" text-anchor="middle" fill="#86efac" font-size="11">SQLite (or DATABASE_URL)</text>
+          </svg>
+        </div>
+        <nav class="card toc" aria-label="Table of contents">
+          <h2>Contents</h2>
+          <ul>
+            <li><a href="#overview">1. Overview</a></li>
+            <li><a href="#use-case">2. Use case diagram</a></li>
+            <li><a href="#class">3. Class diagram (ORM)</a></li>
+            <li><a href="#seq-generic">4. Sequence — protected request</a></li>
+            <li><a href="#seq-auth">5. Sequence — auth &amp; init</a></li>
+            <li><a href="#seq-workout">6. Sequence — workout &amp; chatbot</a></li>
+            <li><a href="#modules">7. Modules &amp; technologies</a></li>
+            <li><a href="#data">8. Data management</a></li>
+            <li><a href="#api">9. API reference (compact)</a></li>
+            <li><a href="#extras">10. Security &amp; behavior notes</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <section id="overview">
+      <h2>1. Overview</h2>
+      <ul>
+        <li><strong>Framework:</strong> <a href="https://fastapi.tiangolo.com/">FastAPI</a> on Python, served with <strong>Uvicorn</strong> (ASGI).</li>
+        <li><strong>API prefix:</strong> all routes live under <code>/api</code>. Protected routes use <strong>JWT Bearer</strong> tokens.</li>
+        <li><strong>Database:</strong> SQLAlchemy 2.x; default <code>sqlite:///./trainmate.db</code> — override with <code>DATABASE_URL</code>.</li>
+        <li><strong>AI:</strong> <strong>Groq</strong> for session reports and coach chat; <strong>OpenRouter</strong> (via <code>openai</code> client) as optional provider.</li>
+        <li><strong>Email:</strong> verification and password-reset codes via <strong>SMTP</strong> or <strong>Resend</strong>.</li>
+        <li><strong>Optional ML:</strong> server-side Keras classification at <code>/api/ml/classify</code> when model files exist under <code>ai/models/</code> or <code>ML_MODELS_DIR</code>.</li>
+      </ul>
+      <h3>Run locally</h3>
+      <pre class="code"><code>.venv\Scripts\activate
+pip install -r requirements.txt
+copy .env.example .env
+uvicorn app.main:app --reload --host 0.0.0.0 --port 8000</code></pre>
+      <p class="muted">Health check: <code>GET http://127.0.0.1:8000/api/health</code></p>
+    </section>
+
+    <section id="use-case">
+      <h2>2. Use case diagram</h2>
+      <p class="muted">Actors: mobile/web client, mail provider, LLM providers. PNG charts below use <strong>large type (~22px)</strong>, <strong>dark navy lines</strong>, and <strong>2.5× scale</strong> export so labels and arrows stay readable.</p>
+      <figure class="png-export">
+        <img src="images/use-case.png" alt="TrainMate backend use case diagram" loading="lazy" />
+        <figcaption>PNG — regenerate from <code>docs/diagrams/01-use-case.mmd</code> (<code>mmdc … -s 2.5 -w 2400</code>).</figcaption>
+      </figure>
+      <p class="live-mermaid-note">Live diagram (same source as PNG):</p>
+      <div class="diagram">
+        <pre class="mermaid">
+%%{init: {
+  "theme": "neutral",
+  "themeVariables": {
+    "fontSize": "22px",
+    "fontFamily": "Segoe UI, Arial, Helvetica, sans-serif",
+    "primaryTextColor": "#0f172a",
+    "primaryColor": "#f1f5f9",
+    "lineColor": "#0f172a",
+    "secondaryColor": "#cbd5e1",
+    "tertiaryColor": "#e2e8f0",
+    "clusterBkg": "#f8fafc",
+    "clusterBorder": "#334155",
+    "edgeLabelBackground": "#ffffff",
+    "mainBkg": "#ffffff",
+    "textColor": "#0f172a"
+  },
+  "flowchart": {
+    "curve": "basis",
+    "padding": 28,
+    "nodeSpacing": 70,
+    "rankSpacing": 95,
+    "diagramPadding": 20,
+    "htmlLabels": true
+  }
+}}%%
+flowchart TB
+  User["User: Flutter or Web app"]
+
+  subgraph EXT ["External systems"]
+    direction LR
+    Mail["Email: SMTP or Resend"]
+    AI["AI: Groq or OpenRouter"]
+  end
+
+  subgraph BE ["TrainMate backend"]
+    direction TB
+    R["Register + verify email"]
+    L["Login returns JWT"]
+    P["Password recovery"]
+    Prof["Profile + plan"]
+    W["Save workouts"]
+    Rep["AI session report"]
+    Chat["AI coach chat"]
+    Prog["Progress feedback"]
+    Ml["Pose ML classify"]
+    H["Health check"]
+  end
+
+  User --> R
+  User --> L
+  User --> P
+  User --> Prof
+  User --> W
+  User --> Rep
+  User --> Chat
+  User --> Prog
+  User --> Ml
+  User --> H
+  R --> Mail
+  P --> Mail
+  Rep --> AI
+  Chat --> AI
+  Prog --> AI
+        </pre>
+      </div>
+      <p class="diagram-caption">Edges use the same stroke color as text (<code>#0f172a</code>) so arrows stay visible on white.</p>
+    </section>
+
+    <section id="class">
+      <h2>3. Class diagram — SQLAlchemy models</h2>
+      <figure class="png-export">
+        <img src="images/class-orm.png" alt="ORM class diagram User UserProfile UserPlan WorkoutSession" loading="lazy" />
+        <figcaption>PNG — simplified fields for readability; full schema in <code>app/models.py</code>. Regenerate: <code>mmdc … -s 2.5 -w 2800</code>.</figcaption>
+      </figure>
+      <p class="live-mermaid-note">Live diagram:</p>
+      <div class="diagram">
+        <pre class="mermaid">
+%%{init: {
+  "theme": "neutral",
+  "themeVariables": {
+    "fontSize": "20px",
+    "fontFamily": "Segoe UI, Arial, Helvetica, sans-serif",
+    "primaryTextColor": "#0f172a",
+    "lineColor": "#0f172a",
+    "textColor": "#0f172a",
+    "classText": "#0f172a",
+    "classBox": "#eff6ff",
+    "classBoxBorder": "#1d4ed8",
+    "noteTextColor": "#0f172a",
+    "noteBkgColor": "#fef9c3"
+  },
+  "class": {
+    "hideEmptyMembersBox": false
+  }
+}}%%
+classDiagram
+  direction TB
+
+  class User {
+    +id int
+    +email str
+    +hashed_password str
+    +email_verified bool
+    +profile UserProfile
+    +plan UserPlan
+    +workouts WorkoutSession[]
+  }
+
+  class UserProfile {
+    +user_id FK
+    +age int
+    +height_cm float
+    +weight_kg float
+    +profile_image_base64 text
+  }
+
+  class UserPlan {
+    +user_id FK
+    +category str
+    +duration_weeks int
+    +before_photo_base64 text
+    +after_photo_base64 text
+    +onboarding_completed int
+  }
+
+  class WorkoutSession {
+    +user_id FK
+    +exercise_label str
+    +reps int
+    +duration_sec int
+    +estimated_kcal float
+    +session_report text
+    +created_at datetime
+  }
+
+  User "1" --> "0..1" UserProfile : profile
+  User "1" --> "0..1" UserPlan : plan
+  User "1" --> "*" WorkoutSession : workouts
+
+  note for User "JWT claim uid links here. Full columns: app/models.py"
+        </pre>
+      </div>
+      <h3>Supporting layers</h3>
+      <table>
+        <thead><tr><th>Layer</th><th>Role</th></tr></thead>
+        <tbody>
+          <tr><td><code>app/routers/*.py</code></td><td>HTTP routes: auth, users, workouts, chat, ml</td></tr>
+          <tr><td><code>app/schemas.py</code></td><td>Pydantic request/response models</td></tr>
+          <tr><td><code>app/security.py</code></td><td>bcrypt, JWT, HMAC for email codes</td></tr>
+          <tr><td><code>app/deps.py</code></td><td><code>get_current_user</code> from Bearer token</td></tr>
+          <tr><td><code>app/config.py</code></td><td>Environment settings (<code>.env</code>)</td></tr>
+          <tr><td><code>app/email_delivery.py</code></td><td>SMTP / Resend sending</td></tr>
+          <tr><td><code>app/verification.py</code></td><td>Code issuance &amp; resend cooldowns</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="seq-generic">
+      <h2>4. Sequence diagram — typical protected request</h2>
+      <figure class="png-export">
+        <img src="images/sequence-protected.png" alt="Sequence diagram JWT protected request" loading="lazy" />
+        <figcaption>PNG — numbered steps, thick blue lifelines. Source <code>docs/diagrams/03-sequence-protected.mmd</code>.</figcaption>
+      </figure>
+      <p class="live-mermaid-note">Live diagram:</p>
+      <div class="diagram">
+        <pre class="mermaid">
+%%{init: {
+  "theme": "neutral",
+  "themeVariables": {
+    "fontSize": "20px",
+    "fontFamily": "Segoe UI, Arial, Helvetica, sans-serif",
+    "actorBkg": "#dbeafe",
+    "actorBorder": "#1d4ed8",
+    "actorTextColor": "#0f172a",
+    "signalColor": "#1d4ed8",
+    "signalTextColor": "#0f172a",
+    "labelBoxBkgColor": "#e0e7ff",
+    "labelTextColor": "#0f172a",
+    "loopTextColor": "#0f172a",
+    "noteBkgColor": "#fef08a",
+    "noteTextColor": "#0f172a",
+    "activationBorderColor": "#1d4ed8",
+    "activationBkgColor": "#bfdbfe",
+    "sequenceNumberColor": "#0f172a"
+  },
+  "sequence": {
+    "actorFontSize": 19,
+    "noteFontSize": 17,
+    "messageFontSize": 18,
+    "boxMargin": 14,
+    "boxTextMargin": 8,
+    "mirrorActors": false,
+    "bottomMarginAdj": 18,
+    "showSequenceNumbers": false
+  }
+}}%%
+sequenceDiagram
+  autonumber
+  participant C as Client app
+  participant API as FastAPI route
+  participant JWT as JWT deps verify user
+  participant DB as Database
+  participant X as Handler logic
+
+  C->>API: HTTP plus Bearer JWT header
+  API->>JWT: Decode JWT and load User
+  JWT->>DB: SELECT user by id from token
+  DB-->>JWT: User row or empty
+  JWT-->>API: User OK or 401 Unauthorized or 403 Forbidden
+
+  API->>X: Call route handler with User
+  X->>DB: SELECT or INSERT as needed
+  DB-->>X: Query result
+
+  opt If route uses LLM
+    X->>X: Call Groq or OpenRouter API
+  end
+
+  X-->>API: Response object DTO
+  API-->>C: JSON HTTP response
+        </pre>
+      </div>
+    </section>
+
+    <section id="seq-auth">
+      <h2>5. Sequence diagram — user authentication &amp; initialization</h2>
+      <p class="muted">Registration sends a verification email; after verification or login, the client calls <code>GET /api/users/me</code> with the JWT.</p>
+      <figure class="png-export">
+        <img src="images/sequence-auth.png" alt="Sequence diagram registration login verify email users me" loading="lazy" />
+        <figcaption>PNG — four colored bands (sign up, verify, login, session). Source <code>04-sequence-auth.mmd</code>.</figcaption>
+      </figure>
+      <p class="live-mermaid-note">Live diagram:</p>
+      <div class="diagram">
+        <pre class="mermaid">
+%%{init: {
+  "theme": "neutral",
+  "themeVariables": {
+    "fontSize": "19px",
+    "fontFamily": "Segoe UI, Arial, Helvetica, sans-serif",
+    "actorBkg": "#dbeafe",
+    "actorBorder": "#1d4ed8",
+    "actorTextColor": "#0f172a",
+    "signalColor": "#1d4ed8",
+    "signalTextColor": "#0f172a",
+    "noteBkgColor": "#fef08a",
+    "noteTextColor": "#0f172a",
+    "labelBoxBkgColor": "#e0e7ff",
+    "labelTextColor": "#0f172a"
+  },
+  "sequence": {
+    "actorFontSize": 18,
+    "noteFontSize": 17,
+    "messageFontSize": 17,
+    "boxMargin": 16
+  }
+}}%%
+sequenceDiagram
+  autonumber
+  participant App as Mobile or Web app
+  participant Auth as Auth router /api/auth
+  participant Users as Users router /api/users
+  participant DB as SQLite DB
+  participant Mail as Email sender
+
+  rect rgb(240, 249, 255)
+    Note over App, Mail: A — Sign up
+    App->>Auth: POST register email password
+    Auth->>DB: INSERT user + empty profile
+    Auth->>Auth: Save HMAC verification code
+    Auth->>Mail: Send 6 digit code
+    Mail-->>Auth: Sent OK or error
+    Auth-->>App: 201 Created user JSON
+  end
+
+  rect rgb(254, 252, 232)
+    Note over App, DB: B — Confirm email
+    App->>Auth: POST verify-email code
+    Auth->>DB: Match code + expiry
+    Auth->>Auth: Issue JWT access token
+    Auth-->>App: JWT + user JSON
+  end
+
+  rect rgb(236, 253, 245)
+    Note over App, DB: C — Login
+    App->>Auth: POST login email password
+    Auth->>DB: Load user check password
+    Note right of Auth: 403 if email not verified
+    Auth->>Auth: Issue JWT
+    Auth-->>App: access_token string
+  end
+
+  rect rgb(243, 232, 255)
+    Note over App, Users: D — Load session
+    App->>Users: GET me + Bearer JWT
+    Users->>DB: Join profile + plan
+    Users-->>App: User profile plan JSON
+  end
+        </pre>
+      </div>
+      <p><strong>Notes:</strong> <code>get_current_user</code> rejects missing/invalid tokens and users with <code>email_verified = false</code>. Changing email via <code>PATCH /api/users/me/account</code> may set <code>pending_email</code> and trigger another verification flow.</p>
+    </section>
+
+    <section id="seq-workout">
+      <h2>6. Sequence diagram — workout finalization &amp; AI chatbot</h2>
+      <figure class="png-export">
+        <img src="images/sequence-workout-chat.png" alt="Sequence diagram workout save AI report and chat" loading="lazy" />
+        <figcaption>PNG — three bands: save row, AI report, chat. Source <code>05-sequence-workout-chat.mmd</code>.</figcaption>
+      </figure>
+      <p class="live-mermaid-note">Live diagram:</p>
+      <div class="diagram">
+        <pre class="mermaid">
+%%{init: {
+  "theme": "neutral",
+  "themeVariables": {
+    "fontSize": "19px",
+    "fontFamily": "Segoe UI, Arial, Helvetica, sans-serif",
+    "actorBkg": "#dbeafe",
+    "actorBorder": "#1d4ed8",
+    "actorTextColor": "#0f172a",
+    "signalColor": "#1d4ed8",
+    "signalTextColor": "#0f172a",
+    "noteBkgColor": "#fef08a",
+    "noteTextColor": "#0f172a",
+    "labelBoxBkgColor": "#e0e7ff",
+    "labelTextColor": "#0f172a"
+  },
+  "sequence": {
+    "actorFontSize": 18,
+    "noteFontSize": 17,
+    "messageFontSize": 17,
+    "boxMargin": 16
+  }
+}}%%
+sequenceDiagram
+  autonumber
+  participant App as Client app
+  participant WO as Workouts /api/workouts
+  participant DB as Database
+  participant AI as Groq or OpenRouter
+  participant Chat as Chat /api/chat
+
+  rect rgb(240, 249, 255)
+    Note over App, DB: A — Save workout row
+    App->>WO: POST workout JSON + JWT
+    WO->>DB: Load user profile plan
+    WO->>WO: Estimate kcal MET rule
+    WO->>DB: INSERT workout_sessions row
+  end
+
+  rect rgb(254, 243, 199)
+    Note over WO, AI: B — Optional AI report
+    alt Client asked generate_ai_report
+      WO->>AI: Prompt session stats + language
+      AI-->>WO: Plain text report
+      WO->>DB: UPDATE session_report column
+    else No API key or API error
+      WO->>WO: Built-in AR or EN template text
+    end
+    WO-->>App: Workout response JSON
+  end
+
+  rect rgb(220, 252, 231)
+    Note over App, AI: C — Coach chat with memory
+    App->>Chat: POST chat messages + JWT
+    Chat->>DB: Build context stats + last workouts
+    Chat->>AI: System prompts + user text
+    AI-->>Chat: Assistant reply
+
+    alt LLM missing or error
+      Chat-->>App: Short fallback text no HTTP 500
+    else OK
+      Chat-->>App: ChatResponse reply string
+    end
+  end
+        </pre>
+      </div>
+      <p class="muted">Also available: <code>POST /api/chat/progress-feedback?lang=</code> for short progress summaries using the same provider selection and fallbacks.</p>
+    </section>
+
+    <section id="modules">
+      <h2>7. Core backend modules &amp; technologies</h2>
+      <table>
+        <thead><tr><th>Component</th><th>Technology</th><th>Purpose</th></tr></thead>
+        <tbody>
+          <tr><td>Web framework</td><td>FastAPI</td><td>REST, validation, OpenAPI</td></tr>
+          <tr><td>Server</td><td>Uvicorn</td><td>ASGI process</td></tr>
+          <tr><td>ORM</td><td>SQLAlchemy 2</td><td>Models &amp; sessions</td></tr>
+          <tr><td>Auth</td><td>python-jose, bcrypt</td><td>JWT HS256, password hashing</td></tr>
+          <tr><td>Settings</td><td>pydantic-settings</td><td><code>.env</code> loading</td></tr>
+          <tr><td>AI</td><td>groq, openai SDK</td><td>Reports, chat, progress feedback</td></tr>
+          <tr><td>CORS</td><td>Starlette middleware</td><td>Cross-origin clients</td></tr>
+          <tr><td>Email</td><td>SMTP / Resend HTTP</td><td>Verification &amp; reset</td></tr>
+          <tr><td>Optional ML</td><td>tensorflow-cpu, joblib, numpy</td><td><code>/api/ml/classify</code></td></tr>
+        </tbody>
+      </table>
+      <p>Routers mounted in <code>app/main.py</code>: <code>/api/auth</code>, <code>/api/users</code>, <code>/api/workouts</code>, <code>/api/chat</code>, <code>/api/ml</code>, plus <code>/api/health</code>.</p>
+    </section>
+
+    <section id="data">
+      <h2>8. Backend data management</h2>
+      <h3>8.1 Schema creation &amp; SQLite upgrades</h3>
+      <ul>
+        <li>On startup: <code>Base.metadata.create_all(bind=engine)</code> ensures tables exist.</li>
+        <li><code>_ensure_sqlite_columns()</code> adds missing columns on SQLite for older DB files (lightweight migrations without Alembic).</li>
+      </ul>
+      <h3>8.2 Tables</h3>
+      <ul>
+        <li><strong>users</strong> — identity, password hash, verification &amp; reset code hashes.</li>
+        <li><strong>user_profiles</strong> — anthropometrics, notes, profile image (base64).</li>
+        <li><strong>user_plans</strong> — plan category, duration, before/after photos, onboarding flag.</li>
+        <li><strong>workout_sessions</strong> — per-session exercise metrics and optional AI <code>session_report</code>.</li>
+      </ul>
+      <h3>8.3 Request-scoped DB sessions</h3>
+      <p><code>get_db()</code> yields one SQLAlchemy session per request and closes it in a <code>finally</code> block — standard FastAPI pattern.</p>
+      <h3>8.4 Environment variables (see <code>app/config.py</code>)</h3>
+      <ul>
+        <li><code>JWT_SECRET_KEY</code>, <code>JWT_ALGORITHM</code>, <code>ACCESS_TOKEN_EXPIRE_MINUTES</code></li>
+        <li><code>DATABASE_URL</code></li>
+        <li><code>GROQ_API_KEY</code>, <code>GROQ_MODEL</code>, <code>LLM_PROVIDER</code>, <code>OPENROUTER_*</code></li>
+        <li><code>SMTP_*</code> or <code>RESEND_API_KEY</code></li>
+        <li><code>EXPOSE_VERIFICATION_CODES</code> (dev convenience)</li>
+        <li><code>ML_MODELS_DIR</code> (optional path to Keras artifacts)</li>
+      </ul>
+    </section>
+
+    <section id="api">
+      <h2>9. API reference (compact)</h2>
+      <table>
+        <thead><tr><th>Method</th><th>Path</th><th>Auth</th><th>Purpose</th></tr></thead>
+        <tbody>
+          <tr><td>GET</td><td><code>/api/health</code></td><td>No</td><td>Status, email &amp; LLM flags</td></tr>
+          <tr><td>POST</td><td><code>/api/auth/register</code></td><td>No</td><td>Sign up + send verification</td></tr>
+          <tr><td>POST</td><td><code>/api/auth/login</code></td><td>No</td><td>JWT after verified email</td></tr>
+          <tr><td>POST</td><td><code>/api/auth/verify-email</code></td><td>No</td><td>Complete verification + JWT</td></tr>
+          <tr><td>POST</td><td><code>/api/auth/resend-verification</code></td><td>No</td><td>Resend code</td></tr>
+          <tr><td>POST</td><td><code>/api/auth/forgot-password</code></td><td>No</td><td>Request reset code</td></tr>
+          <tr><td>POST</td><td><code>/api/auth/reset-password</code></td><td>No</td><td>Set new password</td></tr>
+          <tr><td>GET</td><td><code>/api/users/me</code></td><td>Bearer</td><td>User + profile + plan</td></tr>
+          <tr><td>PATCH</td><td><code>/api/users/me/profile</code></td><td>Bearer</td><td>Update profile</td></tr>
+          <tr><td>PATCH</td><td><code>/api/users/me/account</code></td><td>Bearer</td><td>Name, phone, email, password</td></tr>
+          <tr><td>PATCH</td><td><code>/api/users/me/plan</code></td><td>Bearer</td><td>Plan &amp; photos</td></tr>
+          <tr><td>POST</td><td><code>/api/workouts</code></td><td>Bearer</td><td>Create session + optional AI report</td></tr>
+          <tr><td>GET</td><td><code>/api/workouts</code></td><td>Bearer</td><td>List recent workouts</td></tr>
+          <tr><td>POST</td><td><code>/api/chat</code></td><td>Bearer</td><td>Coach chat with user context</td></tr>
+          <tr><td>POST</td><td><code>/api/chat/progress-feedback</code></td><td>Bearer</td><td>Short progress blurb</td></tr>
+          <tr><td>GET</td><td><code>/api/ml/status</code></td><td>No</td><td>Model files present?</td></tr>
+          <tr><td>POST</td><td><code>/api/ml/classify</code></td><td>Bearer</td><td>Pose window classification</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="extras">
+      <h2>10. Security &amp; behavior notes</h2>
+      <ul>
+        <li>Passwords hashed with bcrypt; email codes stored as HMAC digests. Password reset codes are never returned in JSON responses.</li>
+        <li><code>LLM_PROVIDER=auto</code> prefers OpenRouter when a key exists; otherwise Groq.</li>
+        <li>Chat builds rich workout statistics context to ground answers and reduce hallucinated personal facts.</li>
+        <li>Workout kcal uses a MET-style heuristic from exercise name plus weight/duration when available.</li>
+      </ul>
+    </section>
+
+    <footer>
+      <p>
+        Generated from the <code>trainmate_backend/app</code> codebase.
+        PNG assets live under <code>docs/images/</code>; edit <code>docs/diagrams/*.mmd</code> and run
+        <code>npx @mermaid-js/mermaid-cli -i diagrams/&lt;file&gt;.mmd -o images/&lt;name&gt;.png</code> to refresh charts.
+        Use <strong>Print → Save as PDF</strong> from your browser for a single portable document.
+      </p>
+    </footer>
+  </div>
+
+  <!-- Mermaid renders diagrams as SVG inside .diagram boxes -->
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js" crossorigin="anonymous"></script>
+  <script>
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: "neutral",
+      securityLevel: "loose",
+      themeVariables: {
+        fontFamily: "Segoe UI, Arial, Helvetica, sans-serif",
+        primaryTextColor: "#0f172a",
+        lineColor: "#0f172a",
+        signalColor: "#1d4ed8",
+        actorBorder: "#1d4ed8"
+      },
+      flowchart: { useMaxWidth: true, htmlLabels: true, curve: "basis" },
+      sequence: { useMaxWidth: true, diagramMarginX: 12, diagramMarginY: 12 }
+    });
+  </script>
+</body>
+</html>

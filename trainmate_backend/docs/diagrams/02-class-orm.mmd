@@ -1,0 +1,63 @@
+%%{init: {
+  "theme": "neutral",
+  "themeVariables": {
+    "fontSize": "20px",
+    "fontFamily": "Segoe UI, Arial, Helvetica, sans-serif",
+    "primaryTextColor": "#0f172a",
+    "lineColor": "#0f172a",
+    "textColor": "#0f172a",
+    "classText": "#0f172a",
+    "classBox": "#eff6ff",
+    "classBoxBorder": "#1d4ed8",
+    "noteTextColor": "#0f172a",
+    "noteBkgColor": "#fef9c3"
+  },
+  "class": {
+    "hideEmptyMembersBox": false
+  }
+}}%%
+classDiagram
+  direction TB
+
+  class User {
+    +id int
+    +email str
+    +hashed_password str
+    +email_verified bool
+    +profile UserProfile
+    +plan UserPlan
+    +workouts WorkoutSession[]
+  }
+
+  class UserProfile {
+    +user_id FK
+    +age int
+    +height_cm float
+    +weight_kg float
+    +profile_image_base64 text
+  }
+
+  class UserPlan {
+    +user_id FK
+    +category str
+    +duration_weeks int
+    +before_photo_base64 text
+    +after_photo_base64 text
+    +onboarding_completed int
+  }
+
+  class WorkoutSession {
+    +user_id FK
+    +exercise_label str
+    +reps int
+    +duration_sec int
+    +estimated_kcal float
+    +session_report text
+    +created_at datetime
+  }
+
+  User "1" --> "0..1" UserProfile : profile
+  User "1" --> "0..1" UserPlan : plan
+  User "1" --> "*" WorkoutSession : workouts
+
+  note for User "JWT claim uid links here. Full columns: app/models.py"

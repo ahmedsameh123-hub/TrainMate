@@ -1,0 +1,10 @@
+# Optional ML — heavy (~500 MB+). Install AFTER core when you need:
+#   - POST /api/ml/classify  (exercise recognition on server)
+#   - POST /api/ml/body-comparison  (before/after photo analysis)
+#
+# pip install -r requirements-ml.txt
+numpy>=1.23,<2
+joblib>=1.3
+tensorflow-cpu>=2.13,<2.18
+mediapipe==0.10.9
+opencv-python-headless>=4.8,<5

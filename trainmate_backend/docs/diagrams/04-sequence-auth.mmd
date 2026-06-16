@@ -1,0 +1,63 @@
+%%{init: {
+  "theme": "neutral",
+  "themeVariables": {
+    "fontSize": "19px",
+    "fontFamily": "Segoe UI, Arial, Helvetica, sans-serif",
+    "actorBkg": "#dbeafe",
+    "actorBorder": "#1d4ed8",
+    "actorTextColor": "#0f172a",
+    "signalColor": "#1d4ed8",
+    "signalTextColor": "#0f172a",
+    "noteBkgColor": "#fef08a",
+    "noteTextColor": "#0f172a",
+    "labelBoxBkgColor": "#e0e7ff",
+    "labelTextColor": "#0f172a"
+  },
+  "sequence": {
+    "actorFontSize": 18,
+    "noteFontSize": 17,
+    "messageFontSize": 17,
+    "boxMargin": 16
+  }
+}}%%
+sequenceDiagram
+  autonumber
+  participant App as Mobile or Web app
+  participant Auth as Auth router /api/auth
+  participant Users as Users router /api/users
+  participant DB as SQLite DB
+  participant Mail as Email sender
+
+  rect rgb(240, 249, 255)
+    Note over App, Mail: A — Sign up
+    App->>Auth: POST register email password
+    Auth->>DB: INSERT user + empty profile
+    Auth->>Auth: Save HMAC verification code
+    Auth->>Mail: Send 6 digit code
+    Mail-->>Auth: Sent OK or error
+    Auth-->>App: 201 Created user JSON
+  end
+
+  rect rgb(254, 252, 232)
+    Note over App, DB: B — Confirm email
+    App->>Auth: POST verify-email code
+    Auth->>DB: Match code + expiry
+    Auth->>Auth: Issue JWT access token
+    Auth-->>App: JWT + user JSON
+  end
+
+  rect rgb(236, 253, 245)
+    Note over App, DB: C — Login
+    App->>Auth: POST login email password
+    Auth->>DB: Load user check password
+    Note right of Auth: 403 if email not verified
+    Auth->>Auth: Issue JWT
+    Auth-->>App: access_token string
+  end
+
+  rect rgb(243, 232, 255)
+    Note over App, Users: D — Load session
+    App->>Users: GET me + Bearer JWT
+    Users->>DB: Join profile + plan
+    Users-->>App: User profile plan JSON
+  end

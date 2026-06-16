@@ -1,0 +1,63 @@
+%%{init: {
+  "theme": "neutral",
+  "themeVariables": {
+    "fontSize": "22px",
+    "fontFamily": "Segoe UI, Arial, Helvetica, sans-serif",
+    "primaryTextColor": "#0f172a",
+    "primaryColor": "#f1f5f9",
+    "lineColor": "#0f172a",
+    "secondaryColor": "#cbd5e1",
+    "tertiaryColor": "#e2e8f0",
+    "clusterBkg": "#f8fafc",
+    "clusterBorder": "#334155",
+    "edgeLabelBackground": "#ffffff",
+    "mainBkg": "#ffffff",
+    "textColor": "#0f172a"
+  },
+  "flowchart": {
+    "curve": "basis",
+    "padding": 28,
+    "nodeSpacing": 70,
+    "rankSpacing": 95,
+    "diagramPadding": 20,
+    "htmlLabels": true
+  }
+}}%%
+flowchart TB
+  User["User: Flutter or Web app"]
+
+  subgraph EXT ["External systems"]
+    direction LR
+    Mail["Email: SMTP or Resend"]
+    AI["AI: Groq or OpenRouter"]
+  end
+
+  subgraph BE ["TrainMate backend"]
+    direction TB
+    R["Register + verify email"]
+    L["Login returns JWT"]
+    P["Password recovery"]
+    Prof["Profile + plan"]
+    W["Save workouts"]
+    Rep["AI session report"]
+    Chat["AI coach chat"]
+    Prog["Progress feedback"]
+    Ml["Pose ML classify"]
+    H["Health check"]
+  end
+
+  User --> R
+  User --> L
+  User --> P
+  User --> Prof
+  User --> W
+  User --> Rep
+  User --> Chat
+  User --> Prog
+  User --> Ml
+  User --> H
+  R --> Mail
+  P --> Mail
+  Rep --> AI
+  Chat --> AI
+  Prog --> AI

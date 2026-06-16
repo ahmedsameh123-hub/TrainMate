@@ -1,0 +1,54 @@
+%%{init: {
+  "theme": "neutral",
+  "themeVariables": {
+    "fontSize": "20px",
+    "fontFamily": "Segoe UI, Arial, Helvetica, sans-serif",
+    "actorBkg": "#dbeafe",
+    "actorBorder": "#1d4ed8",
+    "actorTextColor": "#0f172a",
+    "signalColor": "#1d4ed8",
+    "signalTextColor": "#0f172a",
+    "labelBoxBkgColor": "#e0e7ff",
+    "labelTextColor": "#0f172a",
+    "loopTextColor": "#0f172a",
+    "noteBkgColor": "#fef08a",
+    "noteTextColor": "#0f172a",
+    "activationBorderColor": "#1d4ed8",
+    "activationBkgColor": "#bfdbfe",
+    "sequenceNumberColor": "#0f172a"
+  },
+  "sequence": {
+    "actorFontSize": 19,
+    "noteFontSize": 17,
+    "messageFontSize": 18,
+    "boxMargin": 14,
+    "boxTextMargin": 8,
+    "mirrorActors": false,
+    "bottomMarginAdj": 18,
+    "showSequenceNumbers": false
+  }
+}}%%
+sequenceDiagram
+  autonumber
+  participant C as Client app
+  participant API as FastAPI route
+  participant JWT as JWT deps verify user
+  participant DB as Database
+  participant X as Handler logic
+
+  C->>API: HTTP plus Bearer JWT header
+  API->>JWT: Decode JWT and load User
+  JWT->>DB: SELECT user by id from token
+  DB-->>JWT: User row or empty
+  JWT-->>API: User OK or 401 Unauthorized or 403 Forbidden
+
+  API->>X: Call route handler with User
+  X->>DB: SELECT or INSERT as needed
+  DB-->>X: Query result
+
+  opt If route uses LLM
+    X->>X: Call Groq or OpenRouter API
+  end
+
+  X-->>API: Response object DTO
+  API-->>C: JSON HTTP response

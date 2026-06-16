@@ -1,0 +1,63 @@
+%%{init: {
+  "theme": "neutral",
+  "themeVariables": {
+    "fontSize": "19px",
+    "fontFamily": "Segoe UI, Arial, Helvetica, sans-serif",
+    "actorBkg": "#dbeafe",
+    "actorBorder": "#1d4ed8",
+    "actorTextColor": "#0f172a",
+    "signalColor": "#1d4ed8",
+    "signalTextColor": "#0f172a",
+    "noteBkgColor": "#fef08a",
+    "noteTextColor": "#0f172a",
+    "labelBoxBkgColor": "#e0e7ff",
+    "labelTextColor": "#0f172a"
+  },
+  "sequence": {
+    "actorFontSize": 18,
+    "noteFontSize": 17,
+    "messageFontSize": 17,
+    "boxMargin": 16
+  }
+}}%%
+sequenceDiagram
+  autonumber
+  participant App as Client app
+  participant WO as Workouts /api/workouts
+  participant DB as Database
+  participant AI as Groq or OpenRouter
+  participant Chat as Chat /api/chat
+
+  rect rgb(240, 249, 255)
+    Note over App, DB: A — Save workout row
+    App->>WO: POST workout JSON + JWT
+    WO->>DB: Load user profile plan
+    WO->>WO: Estimate kcal MET rule
+    WO->>DB: INSERT workout_sessions row
+  end
+
+  rect rgb(254, 243, 199)
+    Note over WO, AI: B — Optional AI report
+    alt Client asked generate_ai_report
+      WO->>AI: Prompt session stats + language
+      AI-->>WO: Plain text report
+      WO->>DB: UPDATE session_report column
+    else No API key or API error
+      WO->>WO: Built-in AR or EN template text
+    end
+    WO-->>App: Workout response JSON
+  end
+
+  rect rgb(220, 252, 231)
+    Note over App, AI: C — Coach chat with memory
+    App->>Chat: POST chat messages + JWT
+    Chat->>DB: Build context stats + last workouts
+    Chat->>AI: System prompts + user text
+    AI-->>Chat: Assistant reply
+
+    alt LLM missing or error
+      Chat-->>App: Short fallback text no HTTP 500
+    else OK
+      Chat-->>App: ChatResponse reply string
+    end
+  end
