@@ -1,0 +1,14 @@
+{
+	"InstallScripts" : 
+	[
+		"C:/Users/HUAWEI/OneDrive/Desktop/PP/build/cmake_install.cmake",
+		"C:/Users/HUAWEI/OneDrive/Desktop/PP/build/flutter/cmake_install.cmake",
+		"C:/Users/HUAWEI/OneDrive/Desktop/PP/build/runner/cmake_install.cmake",
+		"C:/Users/HUAWEI/OneDrive/Desktop/PP/build/plugins/file_selector_windows/cmake_install.cmake",
+		"C:/Users/HUAWEI/OneDrive/Desktop/PP/build/plugins/speech_to_text_windows/cmake_install.cmake",
+		"C:/Users/HUAWEI/OneDrive/Desktop/PP/build/plugins/flutter_local_notifications_windows/cmake_install.cmake",
+		"C:/Users/HUAWEI/OneDrive/Desktop/PP/build/plugins/flutter_local_notifications_windows/shared/cmake_install.cmake",
+		"C:/Users/HUAWEI/OneDrive/Desktop/PP/build/plugins/tflite_flutter/cmake_install.cmake"
+	],
+	"Parallel" : false
+}
