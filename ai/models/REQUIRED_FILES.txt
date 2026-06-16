@@ -1,0 +1,15 @@
+ضع هنا ملفات الموديل المدرب (الأسماء بالظبط):
+
+1) final_forthesis_bidirectionallstm_and_encoders_exercise_classifier_model.h5
+2) thesis_bidirectionallstm_scaler.pkl
+3) thesis_bidirectionallstm_label_encoder.pkl
+
+لو الملفات عندك بأسماء مختلفة، انسخها وأعد تسميتها، أو عدّل المسارات في ExerciseAiTrainer.py وفي export_for_flutter.py
+
+بعد وضع الملفات الثلاثة في هذا المجلد، من PowerShell داخل مجلد "ai":
+  python export_for_flutter.py
+
+ده يصدّر لـ Flutter:
+  trainmate_app/assets/models/exercise_classifier.tflite
+  trainmate_app/assets/models/scaler_params.json
+  trainmate_app/assets/models/classes.json

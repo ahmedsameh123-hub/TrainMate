@@ -1,0 +1,11 @@
+# بيئة منفصلة لتصدير TFLite عندما يتعطل المحوّل على TensorFlow الحديث (ويندوز).
+# أنشئ venv وثبّت ثم شغّل export_for_flutter.py من مجلد ai:
+#
+#   python -m venv .venv_export
+#   .venv_export\Scripts\activate
+#   pip install -r requirements-tflite-export.txt
+#   python export_for_flutter.py
+
+tensorflow==2.13.1
+joblib>=1.3
+numpy>=1.23,<2
